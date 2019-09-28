@@ -1,26 +1,59 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      minute: 0,
+      second: 0,
+      mSecond: 0
+    }
+  }
+  timerStartsNow(e) {
+    e.preventDefault();
+    this.setState(() => {
+      this.timer = setInterval(() => {
+        const { minute, second, mSecond } = this.state;
+        if (mSecond > 0) {
+          this.setState(( {mSecond} ) => ({
+            mSecond: mSecond - 1
+          }))
+        } else {
+          if (second > 0) {
+            this.setState(({ second  }) => ({
+              second: second - 1,
+              mSecond: 59
+            }))
+          } else {
+            if (minute === 0) {
+              clearInterval(this.timer)
+            } else {
+              this.setState(({ minute }) => ({
+                minute: minute - 1,
+                second: 59
+              }))
+            }
+          }
+        }
+
+      }, 1000 / 60);
+
+    })
+
+  }
+  timerStop(e) {
+    e.preventDefault();
+    clearInterval(this.timer)
+  }
+  render() {
+    return (
+      <div id="main">
+        <h1>{this.state.minute} : {this.state.second} : {this.state.mSecond}</h1>
+        <input onChange={(e) => this.setState({ minute: (e.target.value) })}></input><br />
+        <button onClick={(e) => this.timerStartsNow(e)}>Start</button>
+        <button onClick={(e) => this.timerStop(e)}>Stop </button>
+      </div>
+    )
+  }
 }
-
 export default App;
